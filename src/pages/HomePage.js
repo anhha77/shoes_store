@@ -27,6 +27,7 @@ function HomePage() {
   });
   const { watch, reset } = methods;
   const filters = watch();
+  // console.log(filters);
   const filterProducts = applyFilter(products, filters);
 
   useEffect(() => {
@@ -49,7 +50,17 @@ function HomePage() {
     <Container sx={{ display: "flex", minHeight: "100vh", mt: 3 }}>
       <Stack>
         <FormProvider methods={methods}>
-          <ProductFilter resetFilter={reset} />
+          <ProductFilter
+            resetFilter={() =>
+              reset({
+                gender: [],
+                category: "All",
+                priceRange: "",
+                sortBy: "featured",
+                searchQuery: "",
+              })
+            }
+          />
         </FormProvider>
       </Stack>
       <Stack sx={{ flexGrow: 1 }}>
@@ -85,35 +96,24 @@ function HomePage() {
 
 function applyFilter(products, filters) {
   const { sortBy } = filters;
+  console.log(filters);
   let filteredProducts = products;
-
-  // SORT BY
-  if (sortBy === "featured") {
-    filteredProducts = orderBy(products, ["sold"], ["desc"]);
-  }
-  if (sortBy === "newest") {
-    filteredProducts = orderBy(products, ["createdAt"], ["desc"]);
-  }
-  if (sortBy === "priceDesc") {
-    filteredProducts = orderBy(products, ["price"], ["desc"]);
-  }
-  if (sortBy === "priceAsc") {
-    filteredProducts = orderBy(products, ["price"], ["asc"]);
-  }
+  let sortedProducts = [];
 
   // FILTER PRODUCTS
+
   if (filters.gender.length > 0) {
-    filteredProducts = products.filter((product) =>
+    sortedProducts = products.filter((product) =>
       filters.gender.includes(product.gender)
     );
   }
   if (filters.category !== "All") {
-    filteredProducts = products.filter(
+    sortedProducts = products.filter(
       (product) => product.category === filters.category
     );
   }
   if (filters.priceRange) {
-    filteredProducts = products.filter((product) => {
+    sortedProducts = products.filter((product) => {
       if (filters.priceRange === "below") {
         return product.price < 25;
       }
@@ -124,10 +124,28 @@ function applyFilter(products, filters) {
     });
   }
   if (filters.searchQuery) {
-    filteredProducts = products.filter((product) =>
+    sortedProducts = products.filter((product) =>
       product.name.toLowerCase().includes(filters.searchQuery.toLowerCase())
     );
   }
+
+  // SORT BY
+  const resultProducts =
+    sortedProducts.length === 0 ? products : sortedProducts;
+
+  if (sortBy === "featured") {
+    filteredProducts = orderBy(resultProducts, ["sold"], ["desc"]);
+  }
+  if (sortBy === "newest") {
+    filteredProducts = orderBy(resultProducts, ["createdAt"], ["desc"]);
+  }
+  if (sortBy === "priceDesc") {
+    filteredProducts = orderBy(resultProducts, ["price"], ["desc"]);
+  }
+  if (sortBy === "priceAsc") {
+    filteredProducts = orderBy(resultProducts, ["price"], ["asc"]);
+  }
+  console.log(filteredProducts);
   return filteredProducts;
 }
 
