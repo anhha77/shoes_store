@@ -67,8 +67,8 @@ function HomePage() {
         <FormProvider methods={methods}>
           <Stack
             spacing={2}
-            direction={{ xs: "column", sm: "row" }}
-            alignItems={{ sm: "center" }}
+            direction={{ sm: "column", md: "row" }}
+            alignItems={{ sm: "flex-end" }}
             justifyContent="space-between"
             mb={2}
           >
@@ -96,7 +96,7 @@ function HomePage() {
 
 function applyFilter(products, filters) {
   const { sortBy } = filters;
-  console.log(filters);
+  // console.log(filters);
   let filteredProducts = products;
   let sortedProducts = [];
 
@@ -129,6 +129,7 @@ function applyFilter(products, filters) {
     );
   }
 
+  console.log(sortedProducts);
   // SORT BY
   const resultProducts =
     sortedProducts.length === 0 ? products : sortedProducts;
@@ -145,7 +146,7 @@ function applyFilter(products, filters) {
   if (sortBy === "priceAsc") {
     filteredProducts = orderBy(resultProducts, ["price"], ["asc"]);
   }
-  console.log(filteredProducts);
+  // console.log(filteredProducts);
   return filteredProducts;
 }
 
